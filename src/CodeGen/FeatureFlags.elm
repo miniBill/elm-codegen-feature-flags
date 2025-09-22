@@ -339,7 +339,7 @@ generate fileName (Config config) =
             Elm.group
                 [ exposedDeclaration
                     { name = "decoder"
-                    , doc = "A JSON decoder where all fields are optional. Will succeed as long as it gets an object!"
+                    , doc = "A JSON decoder where all fields are optional. Will succeed no matter what!"
                     }
                   <|
                     Elm.withType (Type.namedWith [ "Json", "Decode" ] "Decoder" [ featureFlagsType ]) <|

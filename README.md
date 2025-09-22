@@ -1,22 +1,53 @@
-# Feature flags codegen
+# elm-codegen-feature-flags
 
 An Elm code generation library built on top of
 [elm-codegen](https://package.elm-lang.org/packages/mdgriffith/elm-codegen/latest/) to help you
 generate feature flags without any boilerplate.
 
-## What do you mean by "feature flags"? What's hard about them?
+By "feature flags", we're talking about a record with a bunch of primitive types, mostly booleans.
+Something like:
+
+```elm
+type alias FeatureFlags =
+  { animateSignInButton : Bool
+  , useNewFooter : Bool
+  }
+```
+
+With minimal config, this package aims to make it easy (and safe!) to maintain, extend, and reduce
+these records without thinking hard (or, ideally, at all).
+
+## Table of contents
+
+- [Installation](#installation)
+- [Why use feature flags?](#why-use-feature-flags-)
+- [What's hard about them?](#what-s-hard-about-them-)
+- [What this library generates](#what-this-library-generates)
+- [Feedback](#feedback)
+
+## Installation
+
+Like any Elm package, you're going to need Elm, and a project to install stuff in! After that:
+
+1. Install [elm-codegen](https://github.com/mdgriffith/elm-codegen)
+2. Set up a Generate.elm file (elm-codegen CLI will do this for you automatically)
+3. Within your `codegen/` directory, run `elm install fakemonster/elm-codegen-feature-flags`
+
+
+## Why use feature flags?
 
 Let's say you're working on a big new feature for your website. You've already written a ton of
 code, and you'd like to deploy it and let people take a look, but it's not ready for the general
 public yet.
 
-A common convention is to use what we generally call "feature flags": runtime configuration (usually
-passed as url parameters or json objects!) that you key off of to activate your alternative
-experience. They're usually pretty simple, and I often see them implemented as a big record of
-primitive values: pretty much always booleans, sometimes a string for using a new API version or
-something.
+A common convention is to use "feature flags": runtime configuration (usually passed as url
+parameters or json objects!) that you key off of to activate your alternative experience. They're
+usually pretty simple, and I often see them implemented as a big record of primitive values. Pretty
+much always booleans, sometimes a string for using a new API version or something.
 
-But over time, especially on a big project, these records can get unwieldy:
+## What's hard about them?
+
+Over time, especially on a big project, these records can get unwieldy:
 
 ```elm
 type alias FeatureFlags =
@@ -29,7 +60,8 @@ type alias FeatureFlags =
     }
 ```
 
-This can become error-prone when you've got to serialize and deserialize them:
+And they can become error-prone when you've got to serialize and deserialize them, or you copy-paste
+a bit too much adding a new one:
 
 ```elm
 decoder =
@@ -41,24 +73,23 @@ decoder =
         (field "experimentalAnimationLibary" JD.bool) -- typo!
 ```
 
-Now, in our applications we have ways of preventing some of these issues. We could use custom types
-instead of booleans, or we could tag all of them with phantom types to avoid mixups. We could use
-functions or clever type aliases to get the compiler to guide us through the decoder, encoder etc.
-We could write tests! And I strongly encourage you to do that in the _interesting_ parts of your
+Now, in our applications we have ways of preventing many of these issues. We could use custom types
+instead of booleans, or tag all of them with phantom types to avoid mixups. We could use functions
+or clever type aliases to get the compiler to guide us through the decoder, encoder etc. We could
+write tests! And I strongly encourage you to do all that in the _interesting_ parts of your
 application.
 
 But feature flags aren't interesting! They're a common pattern, it's a pile of data for powering
 `if` expressions, and the only thing custom to you is the field name, at the end of the day. **So
 why not codegen them?**
 
-## What this library offers
+## What this library generates
 
 Straightforwardly, this is a codegen module that can make you an arbitrarily large record full of
-`Bools` and `Maybe String`s. The generated code also has some utility functions that I've found
-useful in working with feature flags. At your discretion, it also mixes in encoding/decoding for
-JSON and/or URL querystrings. If you're being picky, you can note that other than the alias name
-I've picked, you could use this for any kind of record where all the types are `Bool` or `Maybe
-String`.
+`Bools` and `Maybe String`s. The generated code has some utility functions that I've found useful in
+working with feature flags. At your discretion, it also mixes in encoding/decoding for JSON and/or
+URL querystrings. If you're being meticulous, you can note that other than the alias name I've
+picked, you could use this for any kind of record where all the types are `Bool` or `Maybe String`.
 
 Used in elm-codegen, generally it'll look something like this:
 
