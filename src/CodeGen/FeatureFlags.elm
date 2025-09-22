@@ -289,11 +289,11 @@ generate fileName (Config config) =
         featureFlagsType =
             Type.named [] "FeatureFlags"
 
-        applicationFunc :
+        whenAppliedFunc :
             { name : String, doc : String }
             -> (Elm.Expression -> Elm.Expression -> Elm.Expression)
             -> Elm.Declaration
-        applicationFunc textStuff =
+        whenAppliedFunc textStuff =
             exposedDeclaration textStuff
                 << Elm.withType
                     (Type.function
@@ -441,11 +441,13 @@ generate fileName (Config config) =
             Elm.group []
         , exposedDeclaration
             { name = "or"
-
-            -- TODO: example?
             , doc = """
-Join two feature flags together, taking the first value if non-default, else the second. Most useful
-when reconciling feature flags from two sources (e.g. URL querystrings and JSON).
+Join two FeatureFlags together, taking each first value if non-default, else the second. Most useful
+when reconciling feature flags parsed from two sources (e.g. URL querystrings and JSON).
+
+    -- example type is { a: Maybe String, b: Bool }
+    or { a = Just "a", b = False } { a = Just "aa", b = True }
+        == { a = Just "a", b = True }
 """
             }
           <|
@@ -478,19 +480,16 @@ or view functions. Best used in conjunction with [`applyToActive`](#applyToActiv
 
             -- TODO: with both of these application funcs, you could actually use the real input
             -- type people give, if you're feeling creative enough
-            , applicationFunc
+            , whenAppliedFunc
                 { name = "applyToActive"
                 , doc = """
-Invoke a callback for each flag that has a non-default value. As an example, let's say you have a FeatureFlag record of type `{ featA: Bool, featB : Bool }`:
+Invoke a callback for each flag that has a non-default value.
 
+    -- example type is { a: Bool, b: Bool }
     applyToActive
-        { featA = \\_ -> "Feat A"
-        , featB = \\_ -> "Feat B"
-        }
-        { featA = True
-        , featB = False
-        }
-    == [ "Feat A" ]
+        { a = \\_ -> "Feat A", b = \\_ -> "Feat B" }
+        { a = True, b = False }
+        == [ "Feat A" ]
 """
                 }
               <|
@@ -513,19 +512,17 @@ Invoke a callback for each flag that has a non-default value. As an example, let
                             flags
                         )
             , -- TODO: what the hell is with the type annotation here
-              applicationFunc { name = "applyToAll", doc = """
-Invoke a callback for each flag, regardless of status. (Ignore the type variable name there, it's a generation artifact.) Let's say you've got a FeatureFlag record of type `{ a: Maybe String, b: Maybe String, c: Bool }`:
+              whenAppliedFunc { name = "applyToAll", doc = """
+Invoke a callback for each flag, regardless of status. (Ignore the type variable name there, it's a generation artifact.)
 
+    -- example type is { a: Maybe String, b: Maybe String, c: Bool }
     applyToAll
         { a = \\x -> "A: " ++ Maybe.withDefault "<unset>" x
         , b = \\x -> "B: " ++ Maybe.withDefault "<unset>" x
-        , c = \\x -> "C: " ++ if x then "active" else "inactive"
+        , c = \\x -> "C: " ++ (if x then "active" else "inactive")
         }
-        { a = Just "content"
-        , b = Nothing
-        , c = False
-        }
-    == [ "A: content", "B: <unset>", "C: inactive" ]
+        { a = Just "content", b = Nothing, c = False }
+        == [ "A: content", "B: <unset>", "C: inactive" ]
 """ } <|
                 \applied featureFlags ->
                     Elm.list
