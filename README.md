@@ -124,6 +124,11 @@ This generates a module named `MyFeatureFlags` with:
 - a setter for each field
 - utility functions and types to do common operations safely
 
+## Following along
+
+You can reference the `examples` directory in the source code, both its `Main` and its tests, to get
+an idea of the de/serializers and helpers you get in your generated module.
+
 ## Feedback
 
 The code generated here is based on my experience with feature flags, and the types of

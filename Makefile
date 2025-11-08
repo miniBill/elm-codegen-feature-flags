@@ -16,3 +16,7 @@ preview-generated-docs: generate-example
 examples-reactor: generate-example
 	cd examples && \
 		elm reactor --port "$(PORT)"
+
+test-example: generate-example
+	cd examples && \
+		npx elm-test

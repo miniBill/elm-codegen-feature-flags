@@ -154,7 +154,7 @@ string_ name default_ =
     , type_ = type_
     , prioritize =
         \primary secondary ->
-            Elm.ifThen (Op.notEqual primary secondary)
+            Elm.ifThen (Op.notEqual primary default)
                 primary
                 secondary
     }
