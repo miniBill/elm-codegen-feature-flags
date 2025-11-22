@@ -31,8 +31,7 @@ Like any Elm package, you're going to need Elm, and a project to install stuff i
 
 1. Install [elm-codegen](https://github.com/mdgriffith/elm-codegen)
 2. Set up a Generate.elm file (elm-codegen CLI will do this for you automatically)
-3. Within your `codegen/` directory, run `elm install fakemonster/elm-codegen-feature-flags`
-
+3. Within your `codegen/` directory: `elm install fakemonster/elm-codegen-feature-flags`
 
 ## Why use feature flags?
 
@@ -85,13 +84,14 @@ why not codegen them?**
 
 ## What this library generates
 
-Straightforwardly, this is a codegen module that can make you an arbitrarily large record full of
-`Bools` and `Maybe String`s. The generated code has some utility functions that I've found useful in
-working with feature flags. At your discretion, it also mixes in encoding/decoding for JSON and/or
-URL querystrings. If you're being meticulous, you can note that other than the alias name I've
-picked, you could use this for any kind of record where all the types are `Bool` or `Maybe String`.
+Straightforwardly, this is a codegen module that can make you a big (or small!) record full of
+`Bools`, `String`s, and `Maybe String`s. They'll be bundled with:
 
-Used in elm-codegen, generally it'll look something like this:
+1. a JSON encoder and decoder pair (if you call `withJsonConverters`)
+2. a URL builder and parser pair (if you call `withUrlConverters`)
+3. utility functions for easy handling, including joining multiple flag sets and iterating over them
+
+Used in elm-codegen, generally your code will look something like this:
 
 ```elm
 module Generate exposing (main)
@@ -123,6 +123,36 @@ This generates a module named `MyFeatureFlags` with:
 - JSON and URL querystring encoders and decoders
 - a setter for each field
 - utility functions and types to do common operations safely
+
+Then you can use it wherever you like:
+
+```elm
+init : JD.Value -> ( Model, Cmd Msg )
+init flags =
+    ( { flags =
+            Json.Decode.decodeValue MyFeatureFlags.decoder flags
+                |> Result.withDefault MyFeatureFlags.default
+      }
+    , Cmd.none
+    )
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ if model.flags.largeSignupButton then
+            button [ HE.onClick ClickedSignup, HA.class "button-large" ]
+                [ text "PLEASE click!" ]
+
+          else
+            button [ HE.onClick ClickedSignup, HA.class "button" ]
+                [ text "Click here!" ]
+        ]
+```
+
+
+If you're looking with a careful eye, what this package _really_ does is automatic derivation for
+JSON serialization, URL serialization, and a couple of custom concepts of "merging" (`or`) and
+"iterating" (`WhenApplied x`), all limited to "records with a few primitive types".
 
 ## Following along
 

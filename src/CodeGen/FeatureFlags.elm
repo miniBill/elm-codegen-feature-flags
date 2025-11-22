@@ -567,7 +567,7 @@ when reconciling feature flags parsed from two sources (e.g. URL querystrings an
                     flags
             ]
         , namedGroup """
-# Cross-flag operations
+# Iterating over your flags
 
 Let's say you need to do something with all your feature flags. Maybe list the active ones for a bug report, or show the whole collection in a view function so power users can activate your experimental features. When adding a new flag, it's really easy to forget to include it in these kinds of functionality, because *your flags are in a record*! The compiler can't ensure you reference all fields, like it could with `case` expressions.
 
