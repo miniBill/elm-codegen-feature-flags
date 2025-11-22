@@ -3,7 +3,7 @@
     "name": "fakemonster/elm-codegen-feature-flags",
     "summary": "A code generation library for feature flags built from elm-codegen.",
     "license": "BSD-3-Clause",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "exposed-modules": [
         "CodeGen.FeatureFlags"
     ],
