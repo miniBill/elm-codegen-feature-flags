@@ -1,5 +1,3 @@
-SHELL := /run/current-system/sw/bin/bash
-
 PORT ?= 8000
 
 preview-docs:
