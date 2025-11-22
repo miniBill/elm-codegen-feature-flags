@@ -126,8 +126,14 @@ This generates a module named `MyFeatureFlags` with:
 
 ## Following along
 
-You can reference the `examples` directory in the source code, both its `Main` and its tests, to get
-an idea of the de/serializers and helpers you get in your generated module.
+The `examples` directory shows an application using FeatureFlags in practice. Clone this repo, and
+then in the `examples` directory:
+
+1. `npx elm-codegen install`
+2. `npx elm-codegen run --output generated`
+
+You can also use `elm-doc-preview` to see documentation for the _generated_ code as well! All these
+commands are in the Makefile as well.
 
 ## Feedback
 

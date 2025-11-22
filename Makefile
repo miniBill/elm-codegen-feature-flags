@@ -5,6 +5,10 @@ PORT ?= 8000
 preview-docs:
 	npx elm-doc-preview --port "$(PORT)"
 
+examples-elm-codegen-install:
+	cd examples && \
+		npx elm-codegen install
+
 generate-example:
 	cd examples && \
 		npx elm-codegen run --output generated

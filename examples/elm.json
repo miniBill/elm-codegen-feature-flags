@@ -5,6 +5,9 @@
         "generated"
     ],
     "elm-version": "0.19.1",
+    "exposed-modules": [
+        "FeatureFlags"
+    ],
     "dependencies": {
         "direct": {
             "NoRedInk/elm-json-decode-pipeline": "1.0.1",
